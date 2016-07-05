@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">easyMeizhi</string>
+    <string name="please_input_address">请输入查询地址</string>
+</resources>

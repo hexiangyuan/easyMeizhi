@@ -1,0 +1,15 @@
+ext {
+    android = [compileSdkVersion: 23,
+               buildToolsVersion: "23.0.1",
+               applicationId    : "com.demo.meizhi.easymeizhi",
+               minSdkVersion    : 14,
+               targetSdkVersion : 23,
+               versionCode      : 100,
+               versionName      : "1.0.0"]
+
+    dependencies = ["appcompat-v7": "com.android.support:appcompat-v7:23.4.0",
+                    "design"      : "com.android.support:design:23.4.0",
+                    butterknife   : "com.jakewharton:butterknife:8.1.0",
+                    butterknifeApt: "com.jakewharton:butterknife-compiler:8.1.0",
+                    "retrofit"    : "com.squareup.retrofit2:retrofit:2.1.0"]
+}
