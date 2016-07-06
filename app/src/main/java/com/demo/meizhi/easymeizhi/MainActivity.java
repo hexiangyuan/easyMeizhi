@@ -15,49 +15,67 @@ import com.demo.meizhi.easymeizhi.retrofit.WeatherService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
-//    @BindView(R.id.btn_search)Button btnSearch;
-    @BindView(R.id.til_address)TextInputLayout tilText;
-    @BindView(R.id.edit_address)EditText editText;
-    @BindView(R.id.tv_content)TextView tvContent;
+    @BindView(R.id.til_address)
+    TextInputLayout tilText;
+    @BindView(R.id.edit_address)
+    EditText editText;
+    @BindView(R.id.tv_content)
+    TextView tvContent;
     Retrofit retrofit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-         retrofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .baseUrl(Url.WEATHER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }
 
     @OnClick(R.id.btn_search)
-   public void searchClicked(){
+    public void searchClicked() {
         String cityName = editText.getText().toString();
-        if(TextUtils.isEmpty(cityName)){
+        if (TextUtils.isEmpty(cityName)) {
             tilText.setError("请输入城市名");
             return;
         }
         WeatherService weatherService = retrofit.create(WeatherService.class);
-        weatherService.getWeather(2,editText.getText().toString(), Url.KEY)
-                .enqueue(new Callback<WeatherBean>() {
+
+
+        weatherService.getWeather(2, editText.getText().toString(), Url.KEY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<WeatherBean>() {
                     @Override
-                    public void onResponse(Call<WeatherBean> call, Response<WeatherBean> response) {
-                        tvContent.setText(response.body().toString());
+                    public void onCompleted() {
+                        Toast.makeText(MainActivity.this, "Complete", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onFailure(Call<WeatherBean> call, Throwable t) {
-                        Toast.makeText(MainActivity.this,"错误",Toast.LENGTH_SHORT).show();
+                    public void onError(Throwable e) {
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(WeatherBean weatherBean) {
+                        setTvContent(weatherBean.toString());
                     }
                 });
+    }
+
+    private void setTvContent(String str) {
+        tvContent.setText(str);
     }
 
 }
