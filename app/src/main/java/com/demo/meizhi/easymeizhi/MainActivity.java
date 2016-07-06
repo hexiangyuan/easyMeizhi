@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.meizhi.easymeizhi.base.BaseActivity;
+import com.demo.meizhi.easymeizhi.bean.BaseHttpBean;
 import com.demo.meizhi.easymeizhi.bean.WeatherBean;
 import com.demo.meizhi.easymeizhi.http.HttpMethodWeather;
 
@@ -24,17 +25,17 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.tv_content)
     TextView tvContent;
 
-    Subscriber<WeatherBean> subscriber = null;
+    Subscriber<BaseHttpBean<WeatherBean>> subscriber = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        subscriber = new Subscriber<WeatherBean>() {
+        subscriber = new Subscriber<BaseHttpBean<WeatherBean>>() {
             @Override
             public void onCompleted() {
-                Toast.makeText(MainActivity.this, "completed1", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "completed", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -43,8 +44,8 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onNext(WeatherBean weatherBean) {
-                setTvContent(weatherBean.toString());
+            public void onNext(BaseHttpBean<WeatherBean> weatherBean) {
+                setTvContent(weatherBean.result.toString());
             }
         };
     }

@@ -1,5 +1,6 @@
 package com.demo.meizhi.easymeizhi.http;
 
+import com.demo.meizhi.easymeizhi.bean.BaseHttpBean;
 import com.demo.meizhi.easymeizhi.bean.WeatherBean;
 import com.demo.meizhi.easymeizhi.retrofit.WeatherService;
 
@@ -52,7 +53,7 @@ public class HttpMethodWeather {
     /**
      * 获取天气的
      */
-    public  void getWeather(String cityName, Subscriber<WeatherBean> subscriber){
+    public  void getWeather(String cityName, Subscriber<BaseHttpBean<WeatherBean>> subscriber){
         weatherService.getWeather(2,cityName,Url.KEY)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())

@@ -1,5 +1,6 @@
 package com.demo.meizhi.easymeizhi.retrofit;
 
+import com.demo.meizhi.easymeizhi.bean.BaseHttpBean;
 import com.demo.meizhi.easymeizhi.bean.WeatherBean;
 
 import retrofit2.http.GET;
@@ -12,5 +13,5 @@ import rx.Observable;
  */
 public interface WeatherService {
     @GET("index")
-    Observable<WeatherBean> getWeather(@Query("format")int format, @Query("cityname")String cityName, @Query("key")String key);
+    Observable<BaseHttpBean<WeatherBean>> getWeather(@Query("format")int format, @Query("cityname")String cityName, @Query("key")String key);
 }
