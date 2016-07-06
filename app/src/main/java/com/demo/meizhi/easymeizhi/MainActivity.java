@@ -44,6 +44,11 @@ public class MainActivity extends BaseActivity {
         }
         subscriber = new Subscriber<BaseHttpBean<WeatherBean>>() {
             @Override
+            public void onStart() {
+                super.onStart();
+            }
+
+            @Override
             public void onCompleted() {
                 ToastUtil.showToast("Completed");
             }
@@ -65,4 +70,10 @@ public class MainActivity extends BaseActivity {
         tvContent.setText(str);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        subscriber.unsubscribe();
+        subscriber = null;
+    }
 }
