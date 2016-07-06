@@ -11,6 +11,6 @@ import retrofit2.http.Query;
  * Desc:
  */
 public interface WeatherService {
-    @GET("/index")
-    Call<WeatherBean> getWeather(@Query("cityname")String cityName,@Query("key")String key);
+    @GET("index")
+    Call<WeatherBean> getWeather(@Query("format")int format, @Query("cityname")String cityName,@Query("key")String key);
 }
