@@ -15,10 +15,7 @@ public class MzApplication extends Application {
         Instance = this;
     }
 
-    public MzApplication getInstance() {
-        if(Instance == null){
-           return  MzApplication.this;
-        }
+    public static MzApplication getInstance() {
         return Instance;
     }
 }
