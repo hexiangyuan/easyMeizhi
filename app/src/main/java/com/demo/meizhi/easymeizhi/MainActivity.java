@@ -9,18 +9,12 @@ import android.widget.Toast;
 
 import com.demo.meizhi.easymeizhi.base.BaseActivity;
 import com.demo.meizhi.easymeizhi.bean.WeatherBean;
-import com.demo.meizhi.easymeizhi.http.Url;
-import com.demo.meizhi.easymeizhi.retrofit.WeatherService;
+import com.demo.meizhi.easymeizhi.http.HttpMethodWeather;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
     @BindView(R.id.til_address)
@@ -29,18 +23,30 @@ public class MainActivity extends BaseActivity {
     EditText editText;
     @BindView(R.id.tv_content)
     TextView tvContent;
-    Retrofit retrofit;
+
+    Subscriber<WeatherBean> subscriber = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        retrofit = new Retrofit.Builder()
-                .baseUrl(Url.WEATHER_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
+        subscriber = new Subscriber<WeatherBean>() {
+            @Override
+            public void onCompleted() {
+                Toast.makeText(MainActivity.this, "completed1", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNext(WeatherBean weatherBean) {
+                setTvContent(weatherBean.toString());
+            }
+        };
     }
 
     @OnClick(R.id.btn_search)
@@ -50,28 +56,7 @@ public class MainActivity extends BaseActivity {
             tilText.setError("请输入城市名");
             return;
         }
-        WeatherService weatherService = retrofit.create(WeatherService.class);
-
-
-        weatherService.getWeather(2, editText.getText().toString(), Url.KEY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<WeatherBean>() {
-                    @Override
-                    public void onCompleted() {
-                        Toast.makeText(MainActivity.this, "Complete", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(WeatherBean weatherBean) {
-                        setTvContent(weatherBean.toString());
-                    }
-                });
+        HttpMethodWeather.getInstance().getWeather(editText.getText().toString(), subscriber);
     }
 
     private void setTvContent(String str) {
