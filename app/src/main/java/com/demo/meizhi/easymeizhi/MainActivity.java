@@ -73,7 +73,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        subscriber.unsubscribe();
+        if (subscriber != null)
+            subscriber.unsubscribe();
         subscriber = null;
     }
 }
